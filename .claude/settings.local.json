@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m http.server 8000)",
+      "Bash(python3 *)",
+      "Bash(powershell -command \"\\(Select-String -Path 'index.html' -Pattern '</section>' | Measure-Object\\).Count; \\(Select-String -Path 'index.html' -Pattern '<section' | Measure-Object\\).Count\")",
+      "Skill(caveman)"
+    ]
+  }
+}

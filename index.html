@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FORD | Cybersecurity Sprint</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="icon" href="data:,">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ── RESET ── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── TOKENS ── */
+    :root {
+      --bg: #080c10;
+      --surface: #0d1117;
+      --border: #1c2a3a;
+      --accent: #00c8ff;
+      --accent2: #0066cc;
+      --danger: #ff3c3c;
+      --warn: #ffaa00;
+      --ok: #00e676;
+      --text: #c9d1d9;
+      --muted: #5a6a7a;
+      --ford-blue: #003399;
+      --radius: 6px;
+      --mono: 'Courier New', Courier, monospace;
+      --nav-glow: rgba(0, 200, 255, .55);
+      --nav-idle-lo: rgba(0, 200, 255, .28);
+      --nav-idle-hi: rgba(0, 200, 255, .72);
+    }
+
+
+
+
+
+
+    /* ── KEYFRAMES ── */
+    @keyframes glitch {
+
+      0%,
+      80%,
+      100% {
+        transform: none;
+      }
+
+      82% {
+        transform: skewX(4deg) translateX(4px);
+      }
+
+      84% {
+        transform: skewX(-3deg) translateX(-3px);
+      }
+
+      86% {
+        transform: none;
+      }
+
+      88% {
+        transform: translateX(3px);
+      }
+
+      90% {
+        transform: none;
+      }
+    }
+
+    @keyframes glitch-top {
+
+      0%,
+      80%,
+      100% {
+        transform: none;
+        opacity: 1;
+      }
+
+      82% {
+        transform: translateX(-4px);
+        opacity: .8;
+      }
+
+      84% {
+        transform: translateX(2px);
+        opacity: 1;
+      }
+
+      86% {
+        transform: none;
+      }
+    }
+
+    @keyframes glitch-bot {
+
+      0%,
+      80%,
+      100% {
+        transform: none;
+        opacity: 1;
+      }
+
+      82% {
+        transform: translateX(4px);
+        opacity: .7;
+      }
+
+      84% {
+        transform: translateX(-2px);
+        opacity: 1;
+      }
+
+      86% {
+        transform: none;
+      }
+    }
+
+    @keyframes fadein {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scanline {
+      0% {
+        top: -2px;
+      }
+
+      100% {
+        top: 100%;
+      }
+    }
+
+    @keyframes node-pulse {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 10px rgba(0, 200, 255, .2);
+      }
+    }
+
+    @keyframes arrow-fade {
+
+      0%,
+      100% {
+        opacity: .35;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: none;
+      }
+
+      20% {
+        transform: translateX(-4px);
+      }
+
+      40% {
+        transform: translateX(4px);
+      }
+
+      60% {
+        transform: translateX(-2px);
+      }
+
+      80% {
+        transform: translateX(2px);
+      }
+    }
+
+    @keyframes bg-drift {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      25% {
+        transform: translate(28px, -18px) scale(1.03);
+      }
+
+      50% {
+        transform: translate(50px, -35px) scale(1.06);
+      }
+
+      75% {
+        transform: translate(-22px, 38px) scale(.97);
+      }
+
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    @keyframes bg-breathe {
+
+      0%,
+      100% {
+        opacity: .5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* ── BACKGROUND LAYERS ── */
+    .bg-dot-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        radial-gradient(circle, rgba(0, 200, 255, .07) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0, 200, 255, .025) 1px, transparent 1px);
+      background-size: 40px 40px, 80px 80px;
+      background-position: 0 0, 20px 20px;
+      pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(ellipse 820px 700px at -10% -18%, rgba(0, 90, 220, .11) 0%, transparent 100%);
+      pointer-events: none;
+      animation: bg-drift 55s ease-in-out infinite;
+    }
+
+    .bg-glow-2 {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(ellipse 620px 520px at 112% 108%, rgba(0, 150, 255, .06) 0%, transparent 100%);
+      pointer-events: none;
+      animation: bg-drift 72s ease-in-out infinite reverse;
+    }
+
+    .bg-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(ellipse 130% 130% at 50% 50%, transparent 32%, rgba(0, 0, 0, .42) 100%);
+      pointer-events: none;
+    }
+
+    .bg-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(ellipse 55% 35% at 50% 28%, rgba(0, 75, 180, .05) 0%, transparent 100%);
+      pointer-events: none;
+      animation: bg-breathe 14s ease-in-out infinite;
+    }
+
+    .bg-horizon {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: -2;
+      height: 38vh;
+      background: linear-gradient(180deg, rgba(0, 50, 130, .055) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+
+
+
+
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .8rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      transition: color .25s cubic-bezier(.4, 0, .2, 1);
+      position: relative;
+    }
+
+    nav a:not(.nav-brand-link)::after {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--accent);
+      box-shadow: 0 0 5px rgba(0, 200, 255, .4);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform .25s cubic-bezier(.4, 0, .2, 1), opacity .2s cubic-bezier(.4, 0, .2, 1);
+      opacity: 0;
+    }
+
+    nav a:not(.nav-brand-link):hover::after {
+      transform: scaleX(1);
+      opacity: .6;
+    }
+
+    nav a.nav-active::after {
+      transform: scaleX(1);
+      opacity: 1;
+      box-shadow: 0 0 7px rgba(0, 200, 255, .5);
+    }
+
+    /* ── SECTIONS SHARED ── */
+    section {
+      padding: 7rem 2rem 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+      scroll-margin-top: 64px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+      text-shadow: 0 0 8px rgba(0, 200, 255, .4);
+    }
+
+    h1,
+    h2 {
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #fff;
+      margin-bottom: .75rem;
+    }
+
+    .lead {
+      font-size: 1rem;
+      color: var(--text);
+      max-width: 640px;
+      margin-bottom: 2rem;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: repeating-linear-gradient(90deg,
+          rgba(0, 200, 255, .2) 0px, rgba(0, 200, 255, .2) 14px,
+          transparent 14px, transparent 22px);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
+      margin: 4rem auto;
+      max-width: 900px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -5%;
+      width: 5%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 200, 255, 1), transparent);
+      box-shadow: 0 0 7px rgba(0, 200, 255, .45);
+      opacity: 0;
+      animation: divider-sweep 9s ease-in-out infinite;
+    }
+
+    @keyframes divider-sweep {
+      0% {
+        left: -5%;
+        opacity: 0;
+      }
+
+      5% {
+        opacity: 1;
+      }
+
+      70% {
+        left: 105%;
+        opacity: 0;
+      }
+
+      100% {
+        left: 105%;
+        opacity: 0;
+      }
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: hero-dot-pulse 2.4s ease-in-out infinite;
+    }
+
+    h1.hero-title {
+      font-size: clamp(1.7rem, 4.8vw, 3.3rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      letter-spacing: -.01em;
+      margin-bottom: 1rem;
+      animation: slideup .6s .1s both;
+    }
+
+    h1.hero-title em {
+      font-style: normal;
+      color: rgba(0, 200, 255, .88);
+      text-shadow: 0 0 24px rgba(0, 200, 255, .2);
+    }
+
+    .hero-sub {
+      font-size: clamp(.95rem, 2vw, 1.15rem);
+      color: var(--text);
+      max-width: 600px;
+      margin-bottom: 2rem;
+      animation: slideup .6s .2s both;
+    }
+
+    .hero-callout {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .85rem;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .5rem 1.2rem;
+      border-radius: var(--radius);
+      letter-spacing: .05em;
+      animation: slideup .6s .3s both;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .75rem;
+      margin-top: 3rem;
+      animation: slideup .6s .4s both;
+    }
+
+    .hero-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .6rem 1rem;
+      font-size: .78rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .hero-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--card-accent, var(--accent));
+    }
+
+    .card:hover {
+      border-color: var(--card-accent, var(--accent));
+      transform: translateY(-3px);
+      box-shadow: 0 0 28px rgba(0, 200, 255, .1), 0 10px 24px rgba(0, 0, 0, .6);
+    }
+
+    .card:hover h3 {
+      text-shadow: 0 0 10px rgba(0, 200, 255, .25);
+    }
+
+    .card-icon {
+      font-size: 1.4rem;
+      margin-bottom: .6rem;
+      color: var(--card-accent, var(--accent));
+    }
+
+    .card h3 {
+      font-size: .95rem;
+      color: #fff;
+      margin-bottom: .4rem;
+    }
+
+    .card p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: #0a0f14;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--text);
+      overflow-x: auto;
+      margin-top: 1.25rem;
+      position: relative;
+    }
+
+    .code-block .comment {
+      color: var(--muted);
+    }
+
+    .code-block .key {
+      color: var(--accent);
+    }
+
+    .code-block .val {
+      color: var(--ok);
+    }
+
+    .code-block .bad {
+      color: var(--danger);
+    }
+
+    .code-block .warn {
+      color: var(--warn);
+    }
+
+    .code-label {
+      position: absolute;
+      top: .5rem;
+      right: .75rem;
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* ── THREAT TABLE ── */
+    .threat-list {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      margin-top: 1.25rem;
+    }
+
+    .threat-row {
+      display: grid;
+      grid-template-columns: 160px 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .6rem 1rem;
+      font-size: .82rem;
+    }
+
+    .threat-row:hover {
+      border-color: var(--danger);
+    }
+
+    .threat-row:hover .threat-badge {
+      filter: brightness(1.4);
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .threat-name {
+      font-family: var(--mono);
+      color: var(--danger);
+    }
+
+    .threat-desc {
+      color: var(--muted);
+    }
+
+    .threat-badge {
+      font-family: var(--mono);
+      font-size: .65rem;
+      padding: .2rem .5rem;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .badge-crit {
+      background: rgba(255, 60, 60, .15);
+      color: var(--danger);
+    }
+
+    .badge-high {
+      background: rgba(255, 170, 0, .15);
+      color: var(--warn);
+    }
+
+    .badge-med {
+      background: rgba(0, 200, 255, .1);
+      color: var(--accent);
+    }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+      font-family: var(--mono);
+      font-size: .78rem;
+    }
+
+    .flow-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .4rem .8rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .flow-node.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      animation: node-pulse 3s ease-in-out infinite;
+    }
+
+    .flow-node.blocked {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .flow-arrow {
+      color: var(--muted);
+      animation: arrow-fade 2s ease-in-out infinite;
+    }
+
+    /* ── RBAC INTERACTIVE ── */
+    .rbac-selector {
+      display: flex;
+      gap: .5rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .role-btn {
+      font-family: var(--mono);
+      font-size: .78rem;
+      padding: .4rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .05em;
+    }
+
+    .role-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .role-btn.active-viewer {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 200, 255, .08);
+    }
+
+    .role-btn.active-editor {
+      border-color: var(--warn);
+      color: var(--warn);
+      background: rgba(255, 170, 0, .08);
+    }
+
+    .role-btn.active-admin {
+      border-color: var(--ok);
+      color: var(--ok);
+      background: rgba(0, 230, 118, .08);
+    }
+
+    .perm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .5rem;
+      margin-top: 1rem;
+    }
+
+    .perm-pill {
+      font-family: var(--mono);
+      font-size: .75rem;
+      padding: .4rem .75rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      transition: all .25s;
+    }
+
+    .perm-pill.on {
+      border-color: var(--ok);
+      color: var(--ok);
+      background: rgba(0, 230, 118, .07);
+    }
+
+    .perm-pill.off {
+      border-color: var(--border);
+      color: var(--muted);
+      background: transparent;
+      opacity: .4;
+    }
+
+    .perm-pill .site-icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    /* ── SQL SIM ── */
+    .sim-box {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .sim-label {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+
+    .sim-form {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      margin-bottom: .75rem;
+    }
+
+    .sim-field {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-family: var(--mono);
+      font-size: .78rem;
+    }
+
+    .sim-field label {
+      color: var(--muted);
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .sim-input {
+      flex: 1;
+      background: #050810;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .35rem .6rem;
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .sim-input:focus {
+      border-color: var(--accent);
+    }
+
+    .sim-input.injected {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .sim-actions {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: .75rem;
+      padding: .4rem .9rem;
+      border-radius: var(--radius);
+      border: 1px solid;
+      cursor: pointer;
+      letter-spacing: .05em;
+      transition: all .2s;
+    }
+
+    .btn-danger {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(255, 60, 60, .08);
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 60, 60, .18);
+    }
+
+    .btn-ok {
+      border-color: var(--ok);
+      color: var(--ok);
+      background: rgba(0, 230, 118, .07);
+    }
+
+    .btn-ok:hover {
+      background: rgba(0, 230, 118, .15);
+    }
+
+    .btn-muted {
+      border-color: var(--border);
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .btn-muted:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    .sim-result {
+      margin-top: .75rem;
+      padding: .6rem .9rem;
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: .78rem;
+      display: none;
+    }
+
+    .sim-result.vuln {
+      display: block;
+      border: 1px solid var(--danger);
+      background: rgba(255, 60, 60, .07);
+      color: var(--danger);
+      animation: shake .3s ease;
+    }
+
+    .sim-result.fix {
+      display: block;
+      border: 1px solid var(--ok);
+      background: rgba(0, 230, 118, .06);
+      color: var(--ok);
+    }
+
+    .sim-result.info {
+      display: block;
+      border: 1px solid var(--accent);
+      background: rgba(0, 200, 255, .06);
+      color: var(--accent);
+    }
+
+    /* ── RATE LIMIT SIM ── */
+    .rate-sim {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .rate-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+
+    .rate-counter-wrap {
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .rate-count {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      transition: color .2s;
+    }
+
+    .rate-count.warn-color {
+      color: var(--warn);
+    }
+
+    .rate-count.danger-color {
+      color: var(--danger);
+    }
+
+    .rate-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin: .5rem 0 .75rem;
+      overflow: hidden;
+    }
+
+    .rate-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      background: var(--accent);
+      transition: width .25s, background .35s, box-shadow .35s;
+    }
+
+    .rate-status {
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--muted);
+      white-space: pre-line;
+      margin-top: .5rem;
+      min-height: 1.5em;
+    }
+
+    /* ── REFS SECTION ── */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .75rem;
+      margin-top: 1.25rem;
+    }
+
+    .ref-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .ref-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 0 24px rgba(0, 200, 255, .1), 0 10px 24px rgba(0, 0, 0, .6);
+    }
+
+    .ref-tag {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .3rem;
+    }
+
+    .ref-name {
+      font-size: .9rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: .25rem;
+    }
+
+    .ref-desc {
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    /* ── METRIC BOXES ── */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .metric-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-family: var(--mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+
+    .metric-label {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: .25rem;
+      display: block;
+    }
+
+    /* ── LOG TERMINAL ── */
+    .terminal {
+      background: #050810;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: .75rem;
+      margin-top: 1.25rem;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .terminal::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .terminal::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .terminal::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .terminal::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    .log-line {
+      display: flex;
+      gap: 1rem;
+      padding: .15rem 0;
+      border-bottom: 1px solid rgba(28, 42, 58, .3);
+    }
+
+    .log-time {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .log-level {
+      width: 50px;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    .log-level.info {
+      color: var(--accent);
+    }
+
+    .log-level.warn {
+      color: var(--warn);
+    }
+
+    .log-level.error {
+      color: var(--danger);
+    }
+
+    .log-level.audit {
+      color: var(--ok);
+    }
+
+    .log-msg {
+      color: var(--text);
+    }
+
+
+    footer span {
+      color: var(--accent);
+    }
+
+    /* ── REVEAL ON SCROLL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .5s, transform .5s;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── PROGRESS BAR ── */
+    #read-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      box-shadow: 0 0 8px rgba(0, 200, 255, .6);
+      z-index: 200;
+      pointer-events: none;
+      transition: width .08s linear;
+    }
+
+    /* ── NAV ACTIVE ── */
+    nav {
+      border-color: rgba(0, 200, 255, .32);
+    }
+
+    nav a.nav-active {
+      color: var(--accent);
+    }
+
+
+    /* ── MICRO TEXT ── */
+    .micro {
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: var(--muted);
+      margin: 1.25rem 0 .5rem;
+      padding-left: .75rem;
+      border-left: 2px solid var(--border);
+      line-height: 1.6;
+    }
+
+    /* ── CLOSING ── */
+    #closing {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .closing-title {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+    }
+
+    .closing-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+
+    .badge:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── STATUS ROW ── */
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin: .75rem 0 1.25rem;
+    }
+
+    .status-item {
+      font-family: var(--mono);
+      font-size: .66rem;
+      padding: .2rem .55rem;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 230, 118, .25);
+      color: var(--ok);
+      background: rgba(0, 230, 118, .05);
+      letter-spacing: .06em;
+      animation: status-glow 2.5s ease-in-out infinite;
+    }
+
+    .status-item:nth-child(2) {
+      animation-delay: .5s;
+    }
+
+    .status-item:nth-child(3) {
+      animation-delay: 1s;
+    }
+
+    .status-item:nth-child(4) {
+      animation-delay: 1.5s;
+    }
+
+    /* ── TERMINAL CURSOR ── */
+    .terminal-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: var(--accent);
+      opacity: .75;
+      animation: blink .85s step-end infinite;
+      vertical-align: text-bottom;
+      margin-left: 3px;
+      border-radius: 1px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav {
+        gap: .6rem;
+        padding: .5rem 1rem .4rem;
+      }
+
+      nav a {
+        font-size: .65rem;
+        letter-spacing: .02em;
+      }
+
+      #page-switcher {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        gap: .45rem;
+      }
+
+      .page-sw-btn {
+        font-size: .7rem;
+        padding: .2rem .5rem;
+      }
+
+      .threat-row {
+        grid-template-columns: 1fr;
+      }
+
+      .threat-badge {
+        width: fit-content;
+      }
+    }
+
+    /* ── INTEGRANTES BTN ── */
+    #btn-integrantes {
+      position: fixed;
+      top: .7rem;
+      right: 1.5rem;
+      z-index: 90;
+      font-family: var(--mono);
+      font-size: .76rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      padding: .5rem 1.15rem;
+      cursor: pointer;
+      isolation: isolate;
+      transition: color .2s, box-shadow .2s, background .2s;
+    }
+
+    #btn-integrantes:hover {
+      color: var(--accent);
+      background: transparent;
+    }
+
+    /* ── MODAL ── */
+    #modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 0, 0, .68);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    #modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      min-width: 300px;
+      max-width: 520px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0, 0, 0, .8), 0 0 1px rgba(0, 200, 255, .12);
+      transform: translateY(14px);
+      transition: transform .22s;
+    }
+
+    #modal-overlay.open #modal-box {
+      transform: none;
+    }
+
+    .modal-label {
+      font-family: var(--mono);
+      font-size: .63rem;
+      color: var(--accent);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+
+    .modal-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-member {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: .5rem .7rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: .4rem;
+      background: rgba(0, 200, 255, .015);
+      transition: border-color .2s;
+    }
+
+    .modal-member:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-member:hover {
+      border-color: rgba(0, 200, 255, .2);
+    }
+
+    .modal-member-name {
+      font-size: .82rem;
+      color: var(--text);
+    }
+
+    .modal-member-rm {
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .modal-entendi-btn {
+      display: block;
+      width: 100%;
+      font-family: var(--mono);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(0, 200, 255, .08);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: .55rem 1rem;
+      cursor: pointer;
+      margin-top: 1.1rem;
+      transition: background .2s, box-shadow .2s;
+    }
+
+    .modal-entendi-btn:hover {
+      background: rgba(0, 200, 255, .16);
+      box-shadow: 0 0 12px rgba(0, 200, 255, .18);
+    }
+
+    #modal-close {
+      position: absolute;
+      top: .8rem;
+      right: .8rem;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: .2rem .4rem;
+      border-radius: 3px;
+      line-height: 1;
+      transition: color .15s;
+    }
+
+    #modal-close:hover {
+      color: #fff;
+    }
+
+
+    /* ── XSS SIMULATOR ── */
+    .xss-terminal {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      background: #060a0e;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .45rem .75rem;
+      margin-bottom: .65rem;
+    }
+
+    .xss-prompt {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--danger);
+      flex-shrink: 0;
+    }
+
+    .xss-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--warn);
+      min-width: 0;
+    }
+
+    /* ── XSS MODAL ── */
+    #xss-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      background: rgba(0, 0, 0, .75);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    #xss-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #xss-modal-box {
+      background: var(--surface);
+      border: 1px solid var(--danger);
+      border-radius: 8px;
+      padding: 1.6rem 1.9rem;
+      max-width: 440px;
+      width: 92%;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 0, 0, .85), 0 0 24px rgba(255, 60, 60, .08);
+      transform: translateY(12px);
+      transition: transform .22s;
+    }
+
+    #xss-overlay.open #xss-modal-box {
+      transform: none;
+    }
+
+    .xss-modal-label {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--danger);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+
+    .xss-modal-title {
+      font-family: var(--mono);
+      font-size: .95rem;
+      font-weight: 900;
+      color: var(--danger);
+      letter-spacing: .08em;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 12px rgba(255, 60, 60, .35);
+    }
+
+    #xss-modal-body {
+      font-family: var(--mono);
+      font-size: .72rem;
+      line-height: 1.85;
+    }
+
+    .xss-log {
+      color: var(--muted);
+    }
+
+    .xss-alert {
+      color: var(--danger);
+      word-break: break-all;
+      padding-left: .6rem;
+    }
+
+    .xss-fix {
+      color: var(--ok);
+    }
+
+    .xss-spacer {
+      height: .45rem;
+    }
+
+    #xss-modal-close {
+      position: absolute;
+      top: .75rem;
+      right: .75rem;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: .2rem .4rem;
+      border-radius: 3px;
+      transition: color .15s;
+    }
+
+    #xss-modal-close:hover {
+      color: #fff;
+    }
+
+    .xss-entendi-btn {
+      display: block;
+      width: 100%;
+      font-family: var(--mono);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255, 60, 60, .08);
+      border: 1px solid var(--danger);
+      border-radius: var(--radius);
+      padding: .55rem 1rem;
+      cursor: pointer;
+      margin-top: 1.1rem;
+      transition: background .2s, box-shadow .2s;
+    }
+
+    .xss-entendi-btn:hover {
+      background: rgba(255, 60, 60, .16);
+      box-shadow: 0 0 12px rgba(255, 60, 60, .18);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="read-progress"></div>
+
+  <div id="bg-scene" aria-hidden="true">
+    <div class="bgl-img" id="bgl-img"></div>
+    <div class="bgl-dark"></div>
+    <div class="bgl-tint"></div>
+    <canvas class="bgl-canvas" id="bgl-canvas"></canvas>
+    <div class="bgl-hud" id="bgl-hud"></div>
+    <div class="bgl-scanlines"></div>
+    <div class="bgl-noise"></div>
+    <div class="bgl-vignette"></div>
+    <div class="bgl-blur-edges"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ PRELOADER -->
+  <div id="preloader">
+    <div class="pl-brand"><span class="pl-active">SPRINT</span> <span class="pl-sep">//</span> CORPORATIVO <span class="pl-sep">//</span> API</div>
+    <div class="pl-init">INITIALIZING SECURITY LAYERS...</div>
+    <div class="pl-bar-wrap">
+      <div class="pl-bar"></div>
+    </div>
+    <div class="pl-status" id="pl-status"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ NAV -->
+  <nav>
+    <a href="#validacao">Validação</a>
+    <a href="#auth">Auth</a>
+    <a href="#apis">APIs</a>
+    <a href="#dados">Dados</a>
+    <a href="#logs">Logs</a>
+    <a href="#refs">Refs</a>
+  </nav>
+
+  <div id="page-switcher">
+    <a href="index.html" class="page-sw-btn sw-active-sprint">[Sprint]</a>
+    <a href="corporativo.html" class="page-sw-btn sw-corp">Corporativo</a>
+    <a href="api.html" class="page-sw-btn sw-api">API</a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ HERO -->
+  <section id="hero">
+    <div class="hero-tag">Sprint · Cybersecurity</div>
+    <h1 class="hero-title">Segurança não é extra.<br><em>É requisito.</em></h1>
+    <p class="hero-sub">
+      Cinco pilares aplicados em sistemas, APIs e ambiente corporativo.
+      <br>
+      Cada um mapeia uma superfície de ataque real.
+    </p>
+    <div class="hero-callout">// 5 pilares: Entrada · Auth · APIs · Dados · Logs</div>
+
+    <div class="hero-grid">
+      <div class="hero-pill"><span class="dot" style="background:var(--danger)"></span>Input Validation</div>
+      <div class="hero-pill"><span class="dot" style="background:rgba(255,255,255,.18)"></span>Autenticação / RBAC</div>
+      <div class="hero-pill"><span class="dot" style="background:var(--accent)"></span>API Protection</div>
+      <div class="hero-pill"><span class="dot" style="background:rgba(255,255,255,.18)"></span>Privacidade de Dados
+      </div>
+      <div class="hero-pill"><span class="dot" style="background:var(--danger)"></span>Logs & Auditoria</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 1. VALIDAÇÃO -->
+  <section id="validacao">
+    <div class="reveal">
+      <div class="section-label">// 01 · Entrada e Validação</div>
+      <h2>Toda entrada é hostil até provar o contrário.</h2>
+      <p class="lead">
+        Dados chegam do usuário, de outras APIs, de arquivos. Qualquer um pode ser armado.
+        Validar, sanitizar e limitar antes de processar — sem exceção.
+      </p>
+
+      <p class="micro">Todo input é uma superfície de ataque. Validar não é opcional — é a primeira linha.</p>
+
+      <div class="threat-list">
+        <div class="threat-row">
+          <span class="threat-name">SQL Injection</span>
+          <span class="threat-desc">Manipula queries para extrair ou destruir dados</span>
+          <span class="threat-badge badge-crit">CRÍTICO</span>
+        </div>
+        <div class="threat-row">
+          <span class="threat-name">XSS</span>
+          <span class="threat-desc">Injeta scripts no browser de outros usuários</span>
+          <span class="threat-badge badge-crit">CRÍTICO</span>
+        </div>
+        <div class="threat-row">
+          <span class="threat-name">Command Injection</span>
+          <span class="threat-desc">Executa comandos no servidor via input</span>
+          <span class="threat-badge badge-crit">CRÍTICO</span>
+        </div>
+        <div class="threat-row">
+          <span class="threat-name">Payload Flooding</span>
+          <span class="threat-desc">Envia body gigante para travar parser ou consumir memória</span>
+          <span class="threat-badge badge-high">ALTO</span>
+        </div>
+        <div class="threat-row">
+          <span class="threat-name">Buffer Overflow</span>
+          <span class="threat-desc">Entrada além do buffer aloca memória fora do escopo</span>
+          <span class="threat-badge badge-high">ALTO</span>
+        </div>
+      </div>
+
+      <div class="card-grid" style="margin-top:1.25rem">
+        <div class="card" style="--card-accent:var(--warn)">
+          <div class="card-icon"><i data-lucide="shield" class="site-icon"></i></div>
+          <h3>Tratamento Seguro de Erros</h3>
+          <p>Erros não revelam stack trace, estrutura interna, banco, framework ou tecnologia usada.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--accent)">
+          <div class="card-icon"><i data-lucide="sliders-horizontal" class="site-icon"></i></div>
+          <h3>Normalização de Parâmetros</h3>
+          <p>Marca, modelo, versão e atributos seguem padrões definidos antes de chegar à regra de negócio.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="code-label">exemplo · node/express</span>
+        <pre><span class="comment">// ✗ Jamais</span>
+<span class="bad">db.query(`SELECT * FROM users WHERE id = ${req.params.id}`)</span>
+
+<span class="comment">// ✓ Parameterized query + schema validation</span>
+<span class="key">const schema</span> = Joi.object({ id: Joi.number().integer().positive() })
+<span class="key">const</span> { id } = <span class="val">schema.validate(req.params)</span>
+<span class="key">db.query</span>(<span class="val">'SELECT * FROM users WHERE id = ?'</span>, [id])
+
+<span class="comment">// ✓ Limitar tamanho de payload — 10kb máx</span>
+<span class="key">app.use</span>(express.json({ limit: <span class="val">'10kb'</span> }))</pre>
+      </div>
+
+      <div class="code-block" style="margin-top:.75rem">
+        <span class="code-label">prevenção · command injection</span>
+        <pre><span class="comment">// ✗ Jamais interpolar input em comandos shell</span>
+<span class="bad">exec(`convert ${req.body.filename} output.jpg`)</span>
+
+<span class="comment">// ✓ Allowlist estrita + execFile (sem shell) — args separados</span>
+<span class="key">const</span> allowed = <span class="val">/^[a-zA-Z0-9_\-]+\.(jpg|png|pdf)$/</span>
+<span class="key">if</span> (!allowed.test(req.body.filename)) <span class="bad">throw</span> <span class="key">new</span> Error(<span class="val">'formato inválido'</span>)
+<span class="key">execFile</span>(<span class="val">'convert'</span>, [req.body.filename, <span class="val">'output.jpg'</span>])</pre>
+      </div>
+
+      <!-- ── SQL INJECTION SIMULATOR ── -->
+      <div class="sim-box">
+        <div class="sim-label">// simulação educativa · SQL Injection</div>
+        <div class="sim-form">
+          <div class="sim-field">
+            <label>usuário</label>
+            <input id="sql-user" class="sim-input" type="text" value="admin" autocomplete="off" spellcheck="false" />
+          </div>
+          <div class="sim-field">
+            <label>senha</label>
+            <input id="sql-pass" class="sim-input" type="text" value="••••••••" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+        <div class="sim-actions">
+          <button class="btn btn-danger" onclick="sqlInject()">Injetar payload</button>
+          <button class="btn btn-ok" onclick="sqlFix()">Ver correção</button>
+          <button class="btn btn-muted" onclick="sqlReset()">Resetar</button>
+        </div>
+        <div class="sim-result" id="sql-result"></div>
+      </div>
+
+      <!-- ── XSS SIMULATOR ── -->
+      <div class="sim-box" style="margin-top:1rem">
+        <div class="sim-label">// simulação educativa · XSS</div>
+        <div class="xss-terminal">
+          <span class="xss-prompt">$&gt;</span>
+          <input id="xss-input" type="text" class="xss-input" spellcheck="false" autocomplete="off" />
+        </div>
+        <div class="sim-actions">
+          <button class="btn btn-danger" onclick="runXSS()">Executar simulação</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 2. AUTH -->
+  <section id="auth">
+    <div class="reveal">
+      <div class="section-label">// 02 · Autenticação e Autorização</div>
+      <h2>Saber quem é. Saber o que pode fazer.</h2>
+      <p class="lead">
+        JWT assina identidade. OAuth2 delega acesso. RBAC define o perímetro de cada perfil.
+        Token sem expiração é credencial eterna — inaceitável.
+      </p>
+
+      <div class="flow">
+        <div class="flow-node">Client</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node active">POST /auth/login</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node active">JWT (15min) + Refresh (7d)</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node">Request</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node active">Middleware verifica + RBAC</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node active">Resource</div>
+      </div>
+
+      <p class="micro">Identidade verificada. Escopo definido. Cada perfil acessa exatamente o que precisa — nada além.
+      </p>
+
+      <!-- ── RBAC INTERACTIVE ── -->
+      <div class="rbac-selector">
+        <button class="role-btn active-viewer" id="btn-viewer" onclick="setRole('viewer')">usuário comum</button>
+        <button class="role-btn" id="btn-editor" onclick="setRole('editor')">analista</button>
+        <button class="role-btn" id="btn-admin" onclick="setRole('admin')">administrador</button>
+      </div>
+
+      <div class="perm-grid" id="perm-grid">
+        <!-- preenchido por JS -->
+      </div>
+
+      <div class="code-block" style="margin-top:1.25rem">
+        <span class="code-label">payload JWT seguro</span>
+        <pre>{
+  <span class="key">"sub"</span>: <span class="val">"user_id_opaco"</span>,      <span class="comment">// nunca expor PII</span>
+  <span class="key">"role"</span>: <span class="val">"analista"</span>,
+  <span class="key">"iat"</span>: 1715000000,
+  <span class="key">"exp"</span>: 1715000900,         <span class="comment">// 15 minutos</span>
+  <span class="key">"jti"</span>: <span class="val">"uuid-único"</span>          <span class="comment">// revogação por ID</span>
+}</pre>
+      </div>
+
+      <div class="code-block" style="margin-top:.75rem">
+        <span class="code-label">ciclo de renovação · token refresh</span>
+        <pre><span class="comment">// 1. Access token expira (15 min) — server responde 401</span>
+<span class="key">GET /api/leads</span>  → <span class="bad">401 Unauthorized</span>
+
+<span class="comment">// 2. Client envia refresh token (7 dias) para obter novo par</span>
+<span class="key">POST /auth/refresh</span>  { <span class="key">"refresh_token"</span>: <span class="val">"rt_uuid_opaco"</span> }
+
+<span class="comment">// 3. Server valida, invalida o refresh anterior (rotation)</span>
+<span class="comment">//    e emite novo par — impede reutilização de token roubado</span>
+→ { <span class="key">"access_token"</span>: <span class="val">"..."</span>, <span class="key">"refresh_token"</span>: <span class="val">"novo_rt"</span> }</pre>
+      </div>
+
+      <div class="card-grid" style="margin-top:1rem">
+        <div class="card" style="--card-accent:var(--ok)">
+          <div class="card-icon"><i data-lucide="smartphone" class="site-icon"></i></div>
+          <h3>MFA / TOTP</h3>
+          <p>Segundo fator obrigatório para perfis críticos. TOTP (RFC 6238) gera código de 6 dígitos com janela de 30s.
+            Senha vazada sozinha não garante acesso.</p>
+        </div>
+        <div class="card" style="--card-accent:#aa88ff">
+          <div class="card-icon"><i data-lucide="link" class="site-icon"></i></div>
+          <h3>OAuth2 — Delegação Segura</h3>
+          <p>Acesso a recursos externos sem expor credenciais. Authorization Code Flow com PKCE para SPAs. Escopos
+            mínimos por cliente registrado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 3. API -->
+  <section id="apis">
+    <div class="reveal">
+      <div class="section-label">// 03 · APIs e Serviços</div>
+      <h2>A API é a superfície. Protege cada camada.</h2>
+      <p class="lead">
+        HTTPS garante confidencialidade. Rate limiting impede abuso.
+        CORS define quem pode chamar. Payload hash verifica integridade.
+      </p>
+
+      <div class="card-grid">
+        <div class="card" style="--card-accent:var(--accent)">
+          <div class="card-icon"><i data-lucide="lock" class="site-icon"></i></div>
+          <h3>HTTPS / TLS 1.3</h3>
+          <p>Todo tráfego cifrado. HTTP redireciona para HTTPS. HSTS ativo. TLS 1.0 e 1.1 desabilitados. Sem cipher
+            suites fracas.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--warn)">
+          <div class="card-icon"><i data-lucide="timer" class="site-icon"></i></div>
+          <h3>Rate Limiting</h3>
+          <p>100 req/min por IP em endpoints públicos. 10 req/min em <code>/auth</code>. 429 com Retry-After.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--ok)">
+          <div class="card-icon"><i data-lucide="globe" class="site-icon"></i></div>
+          <h3>CORS Seguro</h3>
+          <p>Whitelist explícita de origens. Credenciais apenas em domínios confiáveis. Sem <code>*</code>.</p>
+        </div>
+        <div class="card" style="--card-accent:#aa88ff">
+          <div class="card-icon"><i data-lucide="key-round" class="site-icon"></i></div>
+          <h3>Integridade de Payload</h3>
+          <p>HMAC-SHA256 no header <code>X-Signature</code>. Server rejeita payload sem assinatura válida.</p>
+        </div>
+      </div>
+
+      <p class="micro">A API é a fronteira entre usuário, serviços e banco. Cada requisição não autenticada é uma ameaça
+        em potencial.</p>
+
+      <!-- ── RATE LIMIT SIMULATOR ── -->
+      <div class="rate-sim">
+        <div class="sim-label">// simulação · Rate Limiting — /auth/login endpoint (limite: 10 req/min)</div>
+        <div class="rate-header">
+          <div class="rate-counter-wrap">
+            Requisições: <span class="rate-count" id="rate-count">0</span><span style="color:var(--muted)">&nbsp;/
+              10</span>
+          </div>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn btn-danger" id="rate-btn" onclick="rateHit()">Simular abuso</button>
+            <button class="btn btn-muted" onclick="rateReset()">Reset</button>
+          </div>
+        </div>
+        <div class="rate-bar-wrap">
+          <div class="rate-bar" id="rate-bar"></div>
+        </div>
+        <div class="rate-status" id="rate-status">Clique repetidamente para simular bot/brute-force.</div>
+      </div>
+
+      <div class="code-block">
+        <span class="code-label">headers de segurança</span>
+        <pre><span class="key">Strict-Transport-Security</span>: max-age=63072000; includeSubDomains
+<span class="key">X-Content-Type-Options</span>:   nosniff
+<span class="key">X-Frame-Options</span>:          DENY
+<span class="key">Content-Security-Policy</span>:  default-src 'self'
+<span class="key">Referrer-Policy</span>:          no-referrer
+<span class="key">Permissions-Policy</span>:       camera=(), microphone=()</pre>
+      </div>
+
+      <div class="code-block" style="margin-top:.75rem">
+        <span class="code-label">integridade de payload · HMAC-SHA256</span>
+        <pre><span class="comment">// ✓ Cliente — assinar payload antes de enviar</span>
+<span class="key">const</span> sig = crypto.<span class="val">createHmac</span>(<span class="val">'sha256'</span>, SECRET_KEY)
+  .<span class="val">update</span>(JSON.<span class="val">stringify</span>(body))
+  .<span class="val">digest</span>(<span class="val">'hex'</span>);
+req.headers[<span class="val">'X-Signature'</span>] = sig;
+
+<span class="comment">// ✓ Servidor — verificar antes de processar</span>
+<span class="key">const</span> expected = crypto.<span class="val">createHmac</span>(<span class="val">'sha256'</span>, SECRET_KEY)
+  .<span class="val">update</span>(JSON.<span class="val">stringify</span>(req.body))
+  .<span class="val">digest</span>(<span class="val">'hex'</span>);
+
+<span class="key">if</span> (!crypto.<span class="val">timingSafeEqual</span>(
+  Buffer.<span class="val">from</span>(req.headers[<span class="val">'x-signature'</span>]),
+  Buffer.<span class="val">from</span>(expected)
+)) <span class="key">return</span> res.<span class="val">status</span>(<span class="bad">401</span>).<span class="val">json</span>({ error: <span class="val">'invalid_signature'</span> });</pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 4. PRIVACIDADE -->
+  <section id="dados">
+    <div class="reveal">
+      <div class="section-label">// 04 · Dados e Privacidade</div>
+      <h2>Dado exposto é dado comprometido.</h2>
+      <p class="lead">
+        Criptografar em repouso e em trânsito. Manter só o necessário.
+        Pseudonimizar o resto. Vazamento não é questão de "se" — é de "quando".
+      </p>
+
+      <div class="card-grid">
+        <div class="card" style="--card-accent:var(--danger)">
+          <div class="card-icon"><i data-lucide="lock-keyhole" class="site-icon"></i></div>
+          <h3>Criptografia em Repouso</h3>
+          <p>AES-256 para dados sensíveis de clientes, leads e histórico de manutenção. bcrypt/Argon2 para senhas.
+            Chaves em variáveis de ambiente, nunca no código.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--warn)">
+          <div class="card-icon"><i data-lucide="trash-2" class="site-icon"></i></div>
+          <h3>Retenção e Descarte</h3>
+          <p>Dados retidos só pelo tempo necessário. Soft delete com TTL. Purge automático via job agendado.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--ok)">
+          <div class="card-icon"><i data-lucide="fingerprint" class="site-icon"></i></div>
+          <h3>Pseudonimização</h3>
+          <p>PII substituída por token opaco nos logs e relatórios — especialmente para modelos de ML e dashboards.
+            Mapeamento original protegido separado.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--accent)">
+          <div class="card-icon"><i data-lucide="eye-off" class="site-icon"></i></div>
+          <h3>Sem Exposição Acidental</h3>
+          <p>Respostas de erro nunca retornam stack trace. Campos sensíveis excluídos do JSON de resposta por padrão.
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric-box">
+          <span class="metric-val">AES-256</span>
+          <span class="metric-label">Dados em repouso</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-val">TLS 1.3</span>
+          <span class="metric-label">Dados em trânsito</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-val">Argon2id</span>
+          <span class="metric-label">Hash de senhas</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-val">0 PII</span>
+          <span class="metric-label">Nos logs</span>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:1.25rem">
+        <span class="code-label">implementação · hash de senha + criptografia de campo</span>
+        <pre><span class="comment">// ✓ Argon2id — resistente a GPU brute-force</span>
+<span class="key">const</span> hash = <span class="key">await</span> argon2.hash(password, {
+  type: argon2.argon2id,
+  memoryCost: <span class="val">65536</span>,  <span class="comment">// 64 MB — dificulta ataque paralelo</span>
+  timeCost: <span class="val">3</span>,
+  parallelism: <span class="val">1</span>
+})
+
+<span class="comment">// ✓ AES-256-GCM para campos sensíveis (CPF, e-mail, telefone)</span>
+<span class="comment">// Chave lida de process.env — nunca hardcoded no repositório</span>
+<span class="key">const</span> iv = crypto.randomBytes(<span class="val">16</span>)
+<span class="key">const</span> cipher = crypto.createCipheriv(<span class="val">'aes-256-gcm'</span>, key, iv)
+<span class="key">const</span> encrypted = cipher.update(cpf, <span class="val">'utf8'</span>, <span class="val">'hex'</span>) + cipher.final(<span class="val">'hex'</span>)</pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 5. LOGS -->
+  <section id="logs">
+    <div class="reveal">
+      <div class="section-label">// 05 · Logs e Auditoria</div>
+      <h2>Sem log, não há investigação.</h2>
+      <p class="lead">
+        Log estruturado (JSON). Nível definido por evento. Sem dados sensíveis.
+        Trilha de auditoria imutável. Alertas em tempo real para padrões suspeitos.
+      </p>
+
+      <p class="micro">Logs existem para reconstruir incidentes. Sem trilha, não há forense — só suposição.</p>
+
+      <div class="terminal" id="terminal-log">
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:00:01Z</span>
+          <span class="log-level audit">AUDIT</span>
+          <span class="log-msg">user=u_7f3a action=LOGIN ip=10.0.1.4 result=SUCCESS</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:01:12Z</span>
+          <span class="log-level audit">AUDIT</span>
+          <span class="log-msg">user=u_7f3a action=LEAD_CREATED lead_id=ld_9821 source=web result=SUCCESS</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:02:05Z</span>
+          <span class="log-level audit">AUDIT</span>
+          <span class="log-msg">user=u_3b8c action=CONFIG_CHANGE target=rate_limit_threshold old=100 new=50</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:02:44Z</span>
+          <span class="log-level warn">WARN</span>
+          <span class="log-msg">user=u_9a2d action=BULK_QUERY rows_requested=48000 threshold=10000 — alert sent</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:03:11Z</span>
+          <span class="log-level warn">WARN</span>
+          <span class="log-msg">rate_limit_hit ip=185.220.101.x endpoint=/auth attempts=12</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:03:12Z</span>
+          <span class="log-level error">ERROR</span>
+          <span class="log-msg">auth_failed ip=185.220.101.x reason=invalid_token — blocked</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:05:01Z</span>
+          <span class="log-level warn">WARN</span>
+          <span class="log-msg">unusual_access user=u_9a2d resource=HR_payroll outside_hours=true — alert sent</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">2024-01-15T08:06:44Z</span>
+          <span class="log-level info">INFO</span>
+          <span class="log-msg">token_refresh user=u_7f3a new_exp=+15min</span>
+        </div>
+        <div class="log-line" style="border-bottom:none;padding-top:.3rem">
+          <span class="log-time" style="opacity:.3">2024-01-15T08:07:__Z</span>
+          <span class="log-level info" style="opacity:.3">INFO</span>
+          <span class="log-msg" style="opacity:.3">_</span>
+          <span class="terminal-cursor"></span>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top:1rem">
+        <span class="code-label">estrutura JSON · evento de auditoria</span>
+        <pre>{
+  <span class="key">"timestamp"</span>: <span class="val">"2024-01-15T08:03:11Z"</span>,  <span class="comment">// ISO 8601 UTC</span>
+  <span class="key">"level"</span>:     <span class="val">"WARN"</span>,
+  <span class="key">"event"</span>:     <span class="val">"rate_limit_hit"</span>,
+  <span class="key">"user_id"</span>:   <span class="val">"u_9a2d"</span>,              <span class="comment">// token opaco — zero PII</span>
+  <span class="key">"ip"</span>:        <span class="val">"185.220.101.x"</span>,
+  <span class="key">"endpoint"</span>:  <span class="val">"/auth"</span>,
+  <span class="key">"attempts"</span>:  12,
+  <span class="key">"action"</span>:    <span class="val">"blocked"</span>              <span class="comment">// parseable por SIEM</span>
+}</pre>
+      </div>
+
+      <div class="card-grid" style="margin-top:1rem">
+        <div class="card" style="--card-accent:#aa88ff">
+          <div class="card-icon"><i data-lucide="file-code-2" class="site-icon"></i></div>
+          <h3>Estrutura JSON</h3>
+          <p>Timestamp ISO 8601, nível, usuário anonimizado, ação, resultado. Parseable por SIEM. Cada campo é
+            intencional — nenhum campo sensível.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--danger)">
+          <div class="card-icon"><i data-lucide="triangle-alert" class="site-icon"></i></div>
+          <h3>Eventos Suspeitos</h3>
+          <p>Brute force, acesso fora do horário, privilege escalation — alertas automáticos disparados por threshold
+            configurável.</p>
+        </div>
+        <div class="card" style="--card-accent:var(--ok)">
+          <div class="card-icon"><i data-lucide="archive" class="site-icon"></i></div>
+          <h3>Trilha Imutável</h3>
+          <p>Storage append-only — nenhum processo apaga registros. Retenção mínima de 90 dias para auditoria. Logs de
+            incidentes: 1 ano.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ 6. REFS -->
+  <section id="refs">
+    <div class="reveal">
+      <div class="section-label">// 06 · Maturidade e Referências</div>
+      <h2>Padrões que embasam cada decisão.</h2>
+
+      <div class="ref-grid">
+        <div class="ref-card">
+          <div class="ref-tag">OWASP</div>
+          <div class="ref-name">Top 10</div>
+          <div class="ref-desc">As 10 vulnerabilidades mais críticas em aplicações web — baseline mínimo de segurança.
+          </div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-tag">OWASP</div>
+          <div class="ref-name">ASVS</div>
+          <div class="ref-desc">Application Security Verification Standard — checklist por nível de maturidade (L1 →
+            L3).</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-tag">LGPD</div>
+          <div class="ref-name">Lei 13.709/18</div>
+          <div class="ref-desc">Proteção de dados pessoais no Brasil. Toda PII exige base legal, consentimento e
+            descarte.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-tag">Prática</div>
+          <div class="ref-name">DevSecOps</div>
+          <div class="ref-desc">Segurança integrada ao pipeline — não é revisão pós-deploy, é parte do build.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-tag">ISO</div>
+          <div class="ref-name">27001</div>
+          <div class="ref-desc">Framework internacional de gestão de segurança da informação. Padrão adotado por
+            empresas como a Ford para governança de risco.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-tag">NIST</div>
+          <div class="ref-name">CSF 2.0</div>
+          <div class="ref-desc">Cybersecurity Framework — 6 funções: Govern, Identify, Protect, Detect, Respond,
+            Recover. Referência de maturidade operacional.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ CLOSING -->
+  <div id="closing" class="reveal">
+    <p class="closing-title">
+      Todo sistema será atacado.<br>
+      <em>A diferença está na preparação.</em>
+    </p>
+    <div class="badge-strip">
+      <span class="badge">OWASP</span>
+      <span class="badge">LGPD</span>
+      <span class="badge">Zero Trust</span>
+      <span class="badge">Defense in Depth</span>
+      <span class="badge">Least Privilege</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ INTEGRANTES -->
+  <button id="btn-integrantes" onclick="openIntegrantes()">Integrantes</button>
+
+
+  <div id="modal-overlay" onclick="overlayClickIntegrantes(event)">
+    <div id="modal-box">
+      <div class="modal-label">// Sprint · Equipe</div>
+      <div class="modal-title">Integrantes do Grupo</div>
+      <div class="modal-member">
+        <span class="modal-member-name">Rickelmyn de Souza Ruescas</span>
+        <span class="modal-member-rm">RM 556055</span>
+      </div>
+      <div class="modal-member">
+        <span class="modal-member-name">Juan Fuentes Rufino</span>
+        <span class="modal-member-rm">RM 557673</span>
+      </div>
+      <div class="modal-member">
+        <span class="modal-member-name">Paulo Henrique Monteiro Golovanevsky</span>
+        <span class="modal-member-rm">RM 555300</span>
+      </div>
+      <div class="modal-member">
+        <span class="modal-member-name">Heloisa Fleury Jardim</span>
+        <span class="modal-member-rm">RM 556378</span>
+      </div>
+      <div class="modal-member">
+        <span class="modal-member-name">Pedro Henrique Silva Batista</span>
+        <span class="modal-member-rm">RM 558137</span>
+      </div>
+      <button class="modal-entendi-btn" onclick="closeIntegrantes()">Entendi</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ XSS MODAL -->
+  <div id="xss-overlay" onclick="xssOverlayClick(event)">
+    <div id="xss-modal-box">
+      <div class="xss-modal-label">// simulação educativa · xss</div>
+      <div class="xss-modal-title">XSS SIMULADO BLOQUEADO</div>
+      <div id="xss-modal-body"></div>
+      <button class="xss-entendi-btn" onclick="closeXSSModal()">Entendi</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ FOOTER -->
+  <footer>
+    <p>FORD · Cybersecurity Sprint &nbsp;|&nbsp; <span>5 pilares · 5 superfícies · 0 exceções</span></p>
+    <p style="margin-top:.5rem; font-size:.65rem;">Segurança real. Sem atalhos.</p>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════ JS -->
+  <script>
+    /* ── PRELOADER ── */
+    ; (function () {
+      const msgs = ['VALIDATING INPUTS', 'LOADING RBAC', 'CHECKING API SHIELD', 'ENCRYPTION READY', 'AUDIT LOGS ONLINE']
+      const el = document.getElementById('pl-status')
+      let i = 0
+      el.textContent = msgs[0]
+      const iv = setInterval(() => { if (++i < msgs.length) el.textContent = msgs[i]; else clearInterval(iv) }, 400)
+      setTimeout(() => {
+        const pre = document.getElementById('preloader')
+        pre.classList.add('hide')
+        setTimeout(() => { pre.style.display = 'none' }, 400)
+      }, 2400)
+    })()
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target) }
+      })
+    }, { threshold: 0.1 })
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+
+    /* ── PROGRESS BAR ── */
+    const progressBar = document.getElementById('read-progress')
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      progressBar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%'
+    }, { passive: true })
+
+    /* ── NAV ACTIVE ── */
+    const navLinks = document.querySelectorAll('nav a:not(.nav-brand-link)')
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('nav-active'))
+          const active = document.querySelector(`nav a[href="#${e.target.id}"]`)
+          if (active) active.classList.add('nav-active')
+        }
+      })
+    }, { rootMargin: '-40% 0px -55% 0px' })
+    document.querySelectorAll('section[id]').forEach(s => navObserver.observe(s))
+
+    /* ── SQL INJECTION SIM ── */
+    function sqlInject() {
+      const u = document.getElementById('sql-user')
+      const r = document.getElementById('sql-result')
+      u.value = "' OR '1'='1"
+      u.classList.add('injected')
+      r.style.display = ''
+      r.className = 'sim-result vuln'
+      r.innerHTML = `<strong>⚠ Vulnerabilidade detectada</strong><br>Autenticação burlada por entrada não validada.`
+    }
+
+    function sqlFix() {
+      const u = document.getElementById('sql-user')
+      const r = document.getElementById('sql-result')
+      u.value = 'admin'
+      u.classList.remove('injected')
+      r.style.display = ''
+      r.className = 'sim-result fix'
+      r.innerHTML = `<strong>✓ Correção aplicada</strong><br>Validação de schema + query parametrizada + sanitização.`
+    }
+
+    function sqlReset() {
+      const u = document.getElementById('sql-user')
+      const p = document.getElementById('sql-pass')
+      const r = document.getElementById('sql-result')
+      u.value = 'admin'; p.value = '••••••••'
+      u.classList.remove('injected')
+      r.className = 'sim-result'
+      r.style.display = ''
+    }
+
+    /* ── RATE LIMIT SIM ── */
+    let rateCount = 0
+    const RATE_LIMIT = 10
+
+    function rateHit() {
+      if (rateCount >= RATE_LIMIT) return
+      rateCount++
+      const countEl = document.getElementById('rate-count')
+      countEl.textContent = rateCount
+      const barEl = document.getElementById('rate-bar')
+      const statusEl = document.getElementById('rate-status')
+      const btn = document.getElementById('rate-btn')
+
+      const pct = (rateCount / RATE_LIMIT) * 100
+      barEl.style.width = pct + '%'
+
+      if (rateCount < 7) {
+        countEl.className = 'rate-count'
+        barEl.style.background = 'var(--accent)'
+        statusEl.style.color = 'var(--muted)'
+        statusEl.textContent = `${rateCount} requisições registradas. Tráfego normal.`
+      } else if (rateCount < RATE_LIMIT) {
+        countEl.className = 'rate-count warn-color'
+        barEl.style.background = 'var(--warn)'
+        statusEl.style.color = 'var(--warn)'
+        statusEl.textContent = `⚠ Atenção — padrão suspeito detectado. ${RATE_LIMIT - rateCount} req restantes antes do bloqueio.`
+      } else {
+        countEl.className = 'rate-count danger-color'
+        countEl.style.textShadow = '0 0 8px rgba(255,60,60,.6)'
+        barEl.style.background = 'var(--danger)'
+        barEl.style.boxShadow = '0 0 8px rgba(255,60,60,.5)'
+        statusEl.style.color = 'var(--danger)'
+        statusEl.textContent = '429 Too Many Requests\nRate limit excedido.\nIP temporariamente bloqueado por 60s.\nProteção contra brute-force, scraping e DoS.'
+        document.querySelector('.rate-sim').style.borderColor = 'rgba(255,60,60,.45)'
+        document.querySelector('.rate-sim').style.boxShadow = '0 0 16px rgba(255,60,60,.07)'
+        btn.disabled = true
+        btn.style.opacity = '.4'
+        btn.style.cursor = 'not-allowed'
+      }
+    }
+
+    function rateReset() {
+      rateCount = 0
+      const countEl = document.getElementById('rate-count')
+      const barEl = document.getElementById('rate-bar')
+      const statusEl = document.getElementById('rate-status')
+      countEl.className = 'rate-count'
+      countEl.textContent = '0'
+      countEl.style.textShadow = ''
+      barEl.style.width = '0%'
+      barEl.style.background = 'var(--accent)'
+      barEl.style.boxShadow = ''
+      statusEl.style.color = 'var(--muted)'
+      statusEl.textContent = 'Clique repetidamente para simular bot/brute-force.'
+      document.querySelector('.rate-sim').style.borderColor = ''
+      document.querySelector('.rate-sim').style.boxShadow = ''
+      const btn = document.getElementById('rate-btn')
+      btn.disabled = false; btn.style.opacity = ''; btn.style.cursor = ''
+    }
+
+    /* ── RBAC INTERACTIVE ── */
+    const PERMS = {
+      viewer: [
+        { label: 'Leitura', on: true },
+        { label: 'Escrita', on: false },
+        { label: 'Admin', on: false },
+        { label: 'Auditoria', on: false },
+        { label: 'Gestão', on: false },
+        { label: 'Relatórios', on: true },
+      ],
+      editor: [
+        { label: 'Leitura', on: true },
+        { label: 'Escrita', on: true },
+        { label: 'Admin', on: false },
+        { label: 'Auditoria', on: false },
+        { label: 'Gestão', on: false },
+        { label: 'Relatórios', on: true },
+      ],
+      admin: [
+        { label: 'Leitura', on: true },
+        { label: 'Escrita', on: true },
+        { label: 'Admin', on: true },
+        { label: 'Auditoria', on: true },
+        { label: 'Gestão', on: true },
+        { label: 'Relatórios', on: true },
+      ],
+    }
+
+    const icons = { Leitura: 'eye', Escrita: 'pencil', Admin: 'settings-2', Auditoria: 'clipboard-list', Gestão: 'users', Relatórios: 'bar-chart-2' }
+
+    function setRole(role) {
+      ['viewer', 'editor', 'admin'].forEach(r => {
+        document.getElementById('btn-' + r).className = 'role-btn'
+      })
+      document.getElementById('btn-' + role).className = `role-btn active-${role}`
+
+      const grid = document.getElementById('perm-grid')
+      grid.innerHTML = PERMS[role].map(p => `
+      <div class="perm-pill ${p.on ? 'on' : 'off'}">
+        <i data-lucide="${icons[p.label]}" class="site-icon perm-icon"></i>
+        ${p.label}
+      </div>`).join('')
+      if (window.lucide) lucide.createIcons({ nodes: [grid] })
+    }
+
+    setRole('viewer')
+
+    /* ── INTEGRANTES MODAL ── */
+    function openIntegrantes() { document.getElementById('modal-overlay').classList.add('open'); document.body.classList.add('modal-open') }
+    function closeIntegrantes() { document.getElementById('modal-overlay').classList.remove('open'); document.body.classList.remove('modal-open') }
+    function overlayClickIntegrantes(e) {
+      if (e.target === document.getElementById('modal-overlay')) closeIntegrantes()
+    }
+
+    /* ── XSS SIM ── */
+    document.getElementById('xss-input').value = "<img src=x onerror=\"alert('XSS executado!')\">"
+
+    function runXSS() {
+      const payload = document.getElementById('xss-input').value.trim()
+      const body = document.getElementById('xss-modal-body')
+      body.replaceChildren()
+
+      const lines = payload
+        ? [
+          ['xss-log', '[entrada analisada]'],
+          ['xss-alert', payload],
+          ['xss-spacer', ''],
+          ['xss-log', '[console] XSS simulado detectado'],
+          ['xss-spacer', ''],
+          ['xss-fix', '[status] Entrada bloqueada. Como corrigir: sanitize inputs, escape outputs, use CSP.'],
+          ['xss-log', '→ Confira o console!']
+        ]
+        : [['xss-log', 'Nenhuma payload informada.']]
+
+      lines.forEach(([cls, text]) => {
+        const d = document.createElement('div')
+        d.className = cls
+        d.textContent = text
+        body.appendChild(d)
+      })
+
+      openXSSModal()
+
+      if (payload) {
+        console.warn('⚠️ XSS simulado bloqueado:', payload)
+        console.info('Correção aplicada: escape de saída + sanitização + CSP.')
+      }
+    }
+    function openXSSModal() { document.getElementById('xss-overlay').classList.add('open'); document.body.classList.add('modal-open') }
+    function closeXSSModal() { document.getElementById('xss-overlay').classList.remove('open'); document.body.classList.remove('modal-open') }
+    function xssOverlayClick(e) { if (e.target === document.getElementById('xss-overlay')) closeXSSModal() }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeIntegrantes(); closeXSSModal() } })
+
+      /* ── TERMINAL STREAM ── */
+      ; (function () {
+        const events = [
+          { level: 'info', msg: 'token_refresh user=u_4c1b new_exp=+15min' },
+          { level: 'audit', msg: 'user=u_4c1b action=REPORT_EXPORT format=csv result=SUCCESS' },
+          { level: 'warn', msg: 'failed_login ip=203.0.113.55 attempts=5 endpoint=/auth' },
+          { level: 'error', msg: 'auth_failed ip=203.0.113.55 reason=invalid_credentials — blocked' },
+          { level: 'audit', msg: 'user=u_7f3a action=PASSWORD_CHANGE result=SUCCESS' },
+          { level: 'warn', msg: 'privilege_escalation_attempt user=u_8e3f target_role=admin — denied' },
+          { level: 'info', msg: 'rate_limit_reset ip=185.220.101.x window=60s' },
+          { level: 'audit', msg: 'user=u_3b8c action=DATA_PURGE target=leads_ttl_expired count=142' },
+          { level: 'warn', msg: 'unusual_access user=u_5d9k resource=payroll outside_hours=true — alert sent' },
+          { level: 'audit', msg: 'user=u_2a7f action=ROLE_CHANGE old=viewer new=analista by=u_9x1z' },
+        ]
+        let idx = 0
+        const term = document.getElementById('terminal-log')
+        if (!term) return
+        const cursorLine = term.querySelector('.log-line:last-child')
+        const pad = n => String(n).padStart(2, '0')
+        function nextTime() {
+          const base = new Date('2024-01-15T08:07:00Z')
+          base.setSeconds(base.getSeconds() + (idx + 1) * 47)
+          return `2024-01-15T${pad(base.getUTCHours())}:${pad(base.getUTCMinutes())}:${pad(base.getUTCSeconds())}Z`
+        }
+        setInterval(() => {
+          const ev = events[idx % events.length]
+          idx++
+          const ts = nextTime()
+          const line = document.createElement('div')
+          line.className = 'log-line'
+          line.style.cssText = 'opacity:0;transition:opacity .35s ease'
+          line.innerHTML = `<span class="log-time">${ts}</span><span class="log-level ${ev.level}">${ev.level.toUpperCase()}</span><span class="log-msg">${ev.msg}</span>`
+          term.insertBefore(line, cursorLine)
+          requestAnimationFrame(() => requestAnimationFrame(() => { line.style.opacity = '1' }))
+          term.scrollTop = term.scrollHeight
+        }, 3800)
+      })()
+  </script>
+  <script src="assets/js/bg.js"></script>
+  <script>lucide.createIcons()</script>
+
+</body>
+
+</html>
